@@ -1,0 +1,174 @@
+[
+  {
+    "model": "google/gemma-4-26B-A4B-it",
+    "aiperf_args": "",
+    "aiperf_concurrency": [
+      1,
+      4,
+      16,
+      64,
+      128
+    ]
+  },
+  {
+    "model": "google/gemma-4-E4B-it",
+    "aiperf_args": "",
+    "aiperf_concurrency": [
+      1,
+      4,
+      16,
+      64,
+      128,
+      256
+    ]
+  },
+  {
+    "model": "google/gemma-4-E4B-it-qat-w4a16-ct",
+    "aiperf_args": "",
+    "aiperf_concurrency": [
+      1,
+      4,
+      16,
+      64,
+      128,
+      256
+    ]
+  },
+  {
+    "model": "ibm-granite/granite-4.2-30b",
+    "aiperf_args": "",
+    "aiperf_concurrency": [
+      1,
+      4,
+      16,
+      64,
+      128
+    ]
+  },
+  {
+    "model": "Inferact/Qwen3.8-27B-NVFP4",
+    "aiperf_args": "--extra-inputs '{\"chat_template_kwargs\":{\"enable_thinking\":false}}'",
+    "aiperf_concurrency": [
+      1,
+      4,
+      16,
+      64,
+      128,
+      256
+    ]
+  },
+  {
+    "model": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-NVFP4",
+    "aiperf_args": "",
+    "aiperf_concurrency": [
+      1,
+      4,
+      16,
+      64,
+      128
+    ]
+  },
+  {
+    "model": "nvidia/NVIDIA-Nemotron-3.5-Lightning-30B-A3B-NVFP4",
+    "aiperf_args": "",
+    "aiperf_concurrency": [
+      1,
+      4,
+      16,
+      64,
+      128,
+      256
+    ]
+  },
+  {
+    "model": "nvidia/Qwen3.6-27B-NVFP4",
+    "aiperf_args": "--extra-inputs '{\"chat_template_kwargs\":{\"enable_thinking\":false}}'",
+    "aiperf_concurrency": [
+      1,
+      4,
+      16,
+      64,
+      128,
+      256
+    ]
+  },
+  {
+    "model": "nvidia/Qwen3.6-35B-A3B-NVFP4",
+    "aiperf_args": "--extra-inputs '{\"chat_template_kwargs\":{\"enable_thinking\":false}}'",
+    "aiperf_concurrency": [
+      1,
+      4,
+      16,
+      64,
+      128,
+      256
+    ]
+  },
+  {
+    "model": "Qwen/Qwen3.6-27B",
+    "aiperf_args": "--extra-inputs '{\"chat_template_kwargs\":{\"enable_thinking\":false}}'",
+    "aiperf_concurrency": [
+      1,
+      4,
+      16,
+      64,
+      128
+    ]
+  },
+  {
+    "model": "Qwen/Qwen3.6-35B-A3B",
+    "aiperf_args": "--extra-inputs '{\"chat_template_kwargs\":{\"enable_thinking\":false}}'",
+    "aiperf_concurrency": [
+      1,
+      4,
+      16,
+      64,
+      128
+    ]
+  },
+  {
+    "model": "Qwen/Qwen3.8-27B",
+    "aiperf_args": "--extra-inputs '{\"chat_template_kwargs\":{\"enable_thinking\":false}}'",
+    "aiperf_concurrency": [
+      1,
+      4,
+      16,
+      64,
+      128
+    ]
+  },
+  {
+    "model": "Qwen/Qwen3.8-27B-FP8",
+    "aiperf_args": "--extra-inputs '{\"chat_template_kwargs\":{\"enable_thinking\":false}}'",
+    "aiperf_concurrency": [
+      1,
+      4,
+      16,
+      64,
+      128,
+      256
+    ]
+  },
+  {
+    "model": "RadixArk/Qwen3.8-Flash-Next-NVFP4",
+    "aiperf_args": "--extra-inputs '{\"chat_template_kwargs\":{\"enable_thinking\":false}}'",
+    "aiperf_concurrency": [
+      1,
+      4,
+      16,
+      64
+    ]
+  },
+  {
+    "model": "unsloth/Qwen3.8-27B-NVFP4",
+    "aiperf_args": "--extra-inputs '{\"chat_template_kwargs\":{\"enable_thinking\":false}}'",
+    "aiperf_concurrency": [
+      1,
+      4,
+      16,
+      64,
+      128,
+      256
+    ]
+  }
+]

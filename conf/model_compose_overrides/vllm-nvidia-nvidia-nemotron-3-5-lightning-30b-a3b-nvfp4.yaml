@@ -1,0 +1,4 @@
+services:
+  vllm:
+    command: >
+      --model nvidia/NVIDIA-Nemotron-3.5-Lightning-30B-A3B-NVFP4 --served-model-name nvidia/NVIDIA-Nemotron-3.5-Lightning-30B-A3B-NVFP4 --host 0.0.0.0 --port 8000 --max-model-len 32768 --gpu-memory-utilization 0.80 --max-num-seqs 256 --enable-prompt-tokens-details --trust-remote-code --reasoning-parser nemotron_v3 --async-scheduling --enable-mamba-cache-stochastic-rounding --mamba-backend flashinfer --mamba-cache-philox-rounds 5 --mamba-ssm-cache-dtype float16

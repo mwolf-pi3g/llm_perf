@@ -1,0 +1,8 @@
+# Big-tier override. Measured weight footprint: 390.7 GB vs 288 GB HBM3e (GB300).
+# Weights 390.7 GB exceed the 288 GB of HBM3e outright; 190 GB spills to Grace LPDDR.
+services:
+  vllm:
+    command: >
+      --model nvidia/GLM-5.2-NVFP4 --served-model-name nvidia/GLM-5.2-NVFP4 --host 0.0.0.0 --port 8000 --max-model-len 32768 --gpu-memory-utilization 0.92 --cpu-offload-gb 190 --max-num-seqs 256 --enable-prompt-tokens-details --trust-remote-code --reasoning-parser glm47 --kv-cache-dtype fp8
+    healthcheck:
+      start_period: 3600s

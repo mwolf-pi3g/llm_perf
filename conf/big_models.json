@@ -1,0 +1,52 @@
+[
+  {
+    "model": "MiniMaxAI/MiniMax-M2.7",
+    "aiperf_args": "",
+    "aiperf_concurrency": [
+      1,
+      4,
+      16,
+      64
+    ]
+  },
+  {
+    "model": "nvidia/DeepSeek-V4-Flash-nvfp4-DSpark",
+    "aiperf_args": "",
+    "aiperf_concurrency": [
+      1,
+      4,
+      16,
+      32
+    ]
+  },
+  {
+    "model": "nvidia/GLM-5.2-NVFP4",
+    "aiperf_args": "--extra-inputs '{\"reasoning_effort\":\"low\"}'",
+    "aiperf_concurrency": [
+      1,
+      4,
+      16,
+      32
+    ]
+  },
+  {
+    "model": "nvidia/NVIDIA-Nemotron-3-Ultra-550B-A55B-NVFP4",
+    "aiperf_args": "",
+    "aiperf_concurrency": [
+      1,
+      4,
+      16,
+      32
+    ]
+  },
+  {
+    "model": "zai-org/GLM-5.3-Flash",
+    "aiperf_args": "--extra-inputs '{\"reasoning_effort\":\"low\"}'",
+    "aiperf_concurrency": [
+      1,
+      4,
+      16,
+      32
+    ]
+  }
+]

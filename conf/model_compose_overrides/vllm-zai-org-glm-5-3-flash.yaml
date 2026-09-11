@@ -1,0 +1,10 @@
+# Big-tier override. Measured weight footprint: 305.7 GB vs 288 GB HBM3e (GB300).
+# Weights 305.7 GB exceed 288 GB HBM. Also declares Glm5NextForConditionalGeneration,
+# which is in vLLM main but NOT in the v0.29.0 release -> nightly image required.
+services:
+  vllm:
+    image: vllm/vllm-openai:nightly
+    command: >
+      --model zai-org/GLM-5.3-Flash --served-model-name zai-org/GLM-5.3-Flash --host 0.0.0.0 --port 8000 --max-model-len 32768 --gpu-memory-utilization 0.92 --cpu-offload-gb 110 --max-num-seqs 256 --enable-prompt-tokens-details --trust-remote-code --reasoning-parser glm47
+    healthcheck:
+      start_period: 3600s

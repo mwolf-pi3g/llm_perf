@@ -1,0 +1,9 @@
+# Big-tier override. Measured weight footprint: 214.3 GB vs 288 GB HBM3e (GB300).
+# Weights 214.3 GB (fp8). Fits HBM, but 0.80 util = 230 GB leaves only 16 GB for KV.
+# 0.92 = 265 GB -> ~51 GB KV. No offload needed.
+services:
+  vllm:
+    command: >
+      --model MiniMaxAI/MiniMax-M2.7 --served-model-name MiniMaxAI/MiniMax-M2.7 --host 0.0.0.0 --port 8000 --max-model-len 32768 --gpu-memory-utilization 0.92 --max-num-seqs 256 --enable-prompt-tokens-details --trust-remote-code --enable-auto-tool-choice --reasoning-parser minimax_m2_append_think --tool-call-parser minimax_m2
+    healthcheck:
+      start_period: 1800s

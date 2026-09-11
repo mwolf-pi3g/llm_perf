@@ -1,0 +1,69 @@
+# Big-tier vLLM benchmark harness (conf/big_models.json only).
+# Split from conf/compose.yaml because every model in this tier exceeds, or
+# nearly exceeds, the 288 GB of HBM3e on the GB300 Station. The core tier
+# needs none of this and should keep using conf/compose.yaml.
+#
+#   MODEL=... EXTRA="..." docker compose -f conf/big_compose.yaml up vllm
+#
+# Measured weight footprints vs 288 GB HBM (safetensors metadata, 2026-09-11):
+#   nvidia/GLM-5.2-NVFP4                      390.7 GB  -> needs ~190 GB offload
+#   zai-org/GLM-5.3-Flash                     305.7 GB  -> needs ~110 GB offload + nightly image
+#   nvidia/NVIDIA-Nemotron-3-Ultra-550B-...   298.1 GB  -> needs ~100 GB offload
+#   nvidia/DeepSeek-V4-Flash-nvfp4-DSpark     284.8 GB  -> needs  ~90 GB offload
+#   MiniMaxAI/MiniMax-M2.7                    214.3 GB  -> no offload; util 0.92 is enough
+
+services:
+  vllm:
+    container_name: ${CONTAINER_NAME:-vllm}
+    # Pinned, not :latest. A floating tag mid-campaign silently invalidates
+    # cross-model comparisons. v0.29.0 is the release that carries every
+    # architecture in this tier except Glm5Next -- zai-org/GLM-5.3-Flash
+    # needs VLLM_IMAGE=vllm/vllm-openai:nightly (arm64 manifest exists).
+    image: ${VLLM_IMAGE:-vllm/vllm-openai:v0.29.0}
+    ipc: host
+    shm_size: ${SHM_SIZE:-32gb}
+    ports:
+      - "${PORT:-8000}:8000"
+
+    volumes:
+      # Same cache as the core tier: no reason to duplicate 2 TB of weights.
+      - /home/mw/aiperf-benchmarking/app/conf/hf_cache:/hf-cache
+      - /home/mw/aiperf-benchmarking/app/conf/vllm_cache:/vllm-cache
+
+    environment:
+      HF_HOME: /hf-cache
+      VLLM_CACHE_ROOT: /vllm-cache
+      HF_HUB_OFFLINE: "1"
+      SAFETENSORS_FAST_GPU: "1"
+      VLLM_LOGGING_LEVEL: ${VLLM_LOGGING_LEVEL:-INFO}
+      HF_TOKEN: ${HF_TOKEN:-}
+
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu ]
+
+    # Differences from the core tier, all forced by the footprints above:
+    #   --gpu-memory-utilization 0.92  0.80 (230 GB) leaves MiniMax-M2.7 only
+    #                                  16 GB for KV; 0.92 (265 GB) gives 50 GB.
+    #   --cpu-offload-gb               Spills weights to the 496 GB of Grace
+    #                                  LPDDR over NVLink-C2C. Default 0 so a
+    #                                  model that fits is never slowed down;
+    #                                  set per-model via vllm_args or env.
+    command: >
+      --model ${MODEL:?set MODEL} --served-model-name ${MODEL} --host 0.0.0.0 --port 8000 --max-model-len ${MAX_MODEL_LEN:-32768} --gpu-memory-utilization ${GPU_MEM_UTIL:-0.92} --cpu-offload-gb ${CPU_OFFLOAD_GB:-0} --max-num-seqs ${MAX_NUM_SEQS:-256} --enable-prompt-tokens-details --trust-remote-code ${EXTRA:-}
+
+    healthcheck:
+      test: [ "CMD", "curl", "-sf", "http://localhost:8000/v1/models" ]
+      interval: 15s
+      timeout: 5s
+      # 300-400 GB checkpoints plus offload staging. The core tier's 1200s is
+      # not enough headroom once weights are streaming to host memory.
+      start_period: ${HEALTH_START_PERIOD:-3600s}
+      retries: 5
+
+    stop_grace_period: 120s
+    restart: "no"

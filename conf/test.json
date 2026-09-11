@@ -1,0 +1,20 @@
+[
+  {
+    "model": "Qwen/Qwen2.5-0.5B-Instruct",
+    "aiperf_args": "",
+    "aiperf_concurrency": [
+      1,
+      4,
+      16
+    ]
+  },
+  {
+    "model": "Qwen/Qwen3-0.6B",
+    "aiperf_args": "--extra-inputs '{\"chat_template_kwargs\":{\"enable_thinking\":false}}'",
+    "aiperf_concurrency": [
+      1,
+      4,
+      16
+    ]
+  }
+]

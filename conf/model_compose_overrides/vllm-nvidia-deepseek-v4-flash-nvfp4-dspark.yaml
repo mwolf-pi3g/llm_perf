@@ -1,0 +1,9 @@
+# Big-tier override. Measured weight footprint: 284.8 GB vs 288 GB HBM3e (GB300).
+# Weights 284.8 GB sit just under 288 GB HBM but leave no room for KV at any usable
+# utilization; 90 GB spills to Grace LPDDR.
+services:
+  vllm:
+    command: >
+      --model nvidia/DeepSeek-V4-Flash-nvfp4-DSpark --served-model-name nvidia/DeepSeek-V4-Flash-nvfp4-DSpark --host 0.0.0.0 --port 8000 --max-model-len 32768 --gpu-memory-utilization 0.92 --cpu-offload-gb 90 --max-num-seqs 256 --enable-prompt-tokens-details --trust-remote-code --reasoning-parser deepseek_v4 --kv-cache-dtype fp8
+    healthcheck:
+      start_period: 3600s

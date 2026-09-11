@@ -1,0 +1,17 @@
+apt list --installed > app_versions.txt
+verify available disk space
+install node or run bin/setup/node.init
+
+MANUALLY VERIFY ISL,  OSL,  DOCKER STOPPING and request count
+
+cd to root of app
+tmux 
+source bin/init 
+source venv/bin/activate
+bin/hfdl --conf-model conf/test.json --dl
+bin/container_setup --conf-model conf/test.json
+bin/aiperf.sh --conf-model conf/test.json
+
+NOTES:
+aiperf wheel might need:
+    sudo apt install -y libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 libxkbcommon0 libxcomposite1 libxdamage1 libxrandr2 libgbm1

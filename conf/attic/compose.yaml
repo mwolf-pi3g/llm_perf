@@ -1,0 +1,59 @@
+# Sequential vLLM benchmark harness.
+# One model at a time:  MODEL=... EXTRA="..." docker compose up vllm
+# Big tier:             MODEL=... EXTRA="..." GPU_MEM_UTIL=0.92 docker compose up vllm
+
+services:
+  vllm:
+    container_name: ${CONTAINER_NAME:-vllm}
+    image: ${VLLM_IMAGE:-vllm/vllm-openai:latest}
+    ipc: host
+    shm_size: ${SHM_SIZE:-32gb}
+    ports:
+      - "${PORT:-8000}:8000"
+
+    volumes:
+      # Weights + trust_remote_code modules + xet chunks. Mount the HF_HOME
+      # parent, not just hub/, or custom modeling code re-extracts every run.
+      - /home/mw/aiperf-benchmarking/app/conf/hf_cache:/hf-cache
+      # torch.compile + CUDA graph artifacts. Separate so a vLLM version bump
+      # can nuke this without touching 2 TB of weights.
+      - /home/mw/aiperf-benchmarking/app/conf/vllm_cache:/vllm-cache
+
+    environment:
+      # --- these three are what make the mounts above effective ---
+      # Non-default paths: huggingface_hub and vLLM will not find them otherwise.
+      # Set HF_HOME only. HF_HUB_CACHE would override it and split the cache.
+      HF_HOME: /hf-cache
+      VLLM_CACHE_ROOT: /vllm-cache
+      # Weights are pre-downloaded. Fail loudly on an incomplete cache rather
+      # than stalling mid-benchmark on a network fetch.
+      HF_HUB_OFFLINE: "1"
+
+      SAFETENSORS_FAST_GPU: "1"
+      VLLM_LOGGING_LEVEL: ${VLLM_LOGGING_LEVEL:-INFO}
+      # Unset is fine: offline mode needs no auth, and nothing here is gated.
+      HF_TOKEN: ${HF_TOKEN:-}
+
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu ]
+
+    # Common to every model. Per-model vllm_args arrive via EXTRA.
+    command: >
+      --model ${MODEL:?set MODEL} --served-model-name ${MODEL} --host 0.0.0.0 --port 8000 --max-model-len ${MAX_MODEL_LEN:-32768} --gpu-memory-utilization ${GPU_MEM_UTIL:-0.80} --max-num-seqs ${MAX_NUM_SEQS:-256} --enable-prompt-tokens-details --trust-remote-code ${EXTRA:-}
+
+    healthcheck:
+      test: [ "CMD", "curl", "-sf", "http://localhost:8000/v1/models" ]
+      interval: 15s
+      timeout: 5s
+      # 300 GB checkpoints take minutes to load; a 60s default would call
+      # them unhealthy long before the weights are resident.
+      start_period: ${HEALTH_START_PERIOD:-1200s}
+      retries: 5
+
+    stop_grace_period: 60s
+    restart: "no"

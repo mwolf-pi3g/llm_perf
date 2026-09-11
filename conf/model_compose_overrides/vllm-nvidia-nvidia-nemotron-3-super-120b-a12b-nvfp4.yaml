@@ -1,0 +1,4 @@
+services:
+  vllm:
+    command: >
+      --model nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-NVFP4 --served-model-name nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-NVFP4 --host 0.0.0.0 --port 8000 --max-model-len 32768 --gpu-memory-utilization 0.80 --max-num-seqs 256 --enable-prompt-tokens-details --trust-remote-code --reasoning-parser nemotron_v3 --kv-cache-dtype fp8
