@@ -21,7 +21,7 @@ Three stages, each driven by the same JSON config so a run is reproducible:
 | 3. Benchmark | `bin/aiperf.sh` | Runs AIPerf against each model at every configured concurrency |
 
 Run them in that order. Stage 2 is worth running on its own after any config change — it
-catches a bad `vllm_args` in ~30s instead of failing an hour into a benchmark sweep.
+catches a bad vLLM flag in ~30s instead of failing an hour into a benchmark sweep.
 
 ---
 
@@ -104,7 +104,6 @@ Configs live in `conf/` and are JSON arrays, one object per model:
 [
   {
     "model": "Qwen/Qwen3-0.6B",
-    "vllm_args": "--reasoning-parser qwen3",
     "aiperf_args": "--extra-inputs '{\"chat_template_kwargs\":{\"enable_thinking\":false}}'",
     "aiperf_concurrency": [1, 4, 16]
   }
@@ -114,9 +113,11 @@ Configs live in `conf/` and are JSON arrays, one object per model:
 | Field | Purpose |
 | --- | --- |
 | `model` | HuggingFace repo ID. Also derives the container name and cache path. |
-| `vllm_args` | Extra flags appended to the vLLM server command |
 | `aiperf_args` | Extra flags passed to AIPerf |
 | `aiperf_concurrency` | Concurrency levels to sweep; each is a separate benchmark run |
+
+Per-model **vLLM** flags are not set here — they live in the Compose override for that
+model, described below.
 
 Shipped configs:
 
@@ -126,11 +127,15 @@ Shipped configs:
 
 ### Per-model container overrides
 
-`conf/model_compose_overrides/<container-name>.yaml` holds the generated Docker Compose
-override for each model. `container_setup.sh` writes one automatically the first time it
-sees a model, then **reuses it thereafter** — so later edits to `vllm_args` in the JSON will
-not take effect until you delete the corresponding override file. Hand-tuned flags in these
-files are preserved for the same reason.
+`conf/model_compose_overrides/<container-name>.yaml` holds the Docker Compose override for
+each model, and **this is where per-model vLLM flags belong**. For example, the Qwen3 entry
+carries `--reasoning-parser qwen3`, and the Gemma entries carry `--reasoning-parser gemma4
+--tool-call-parser gemma4`.
+
+`container_setup.sh` generates one automatically the first time it sees a model, then
+**reuses it thereafter** — it never regenerates an existing file. That is what keeps
+hand-tuned flags from being overwritten, but it also means a new model's override starts
+from baseline flags only, so check it before trusting the first run.
 
 Baseline flags come from `conf/base_compose.yaml`, which also pins the vLLM image version.
 That pin is deliberate: a floating tag mid-campaign makes early and late results
@@ -175,8 +180,8 @@ sudo apt install -y libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 libx
 
 **A model fails readiness.** `container_setup` interleaves the container's own logs into its
 output and log file on failure — read those first. The usual causes are an unsupported
-`vllm_args` flag, or the model not fitting at the configured `--gpu-memory-utilization` and
-`--max-model-len`.
+vLLM flag in the model's Compose override, or the model not fitting at the configured
+`--gpu-memory-utilization` and `--max-model-len`.
 
 **Nothing downloads.** `hfdl.sh` requires `--dl` to actually fetch. Also note the vLLM
 container runs with `HF_HUB_OFFLINE=1`, so weights must already be cached before stage 2.
