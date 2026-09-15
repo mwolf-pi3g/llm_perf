@@ -6,4 +6,4 @@ services:
     command: >
       --model nvidia/DeepSeek-V4-Flash-nvfp4-DSpark --served-model-name nvidia/DeepSeek-V4-Flash-nvfp4-DSpark --host 0.0.0.0 --port 8000 --max-model-len 32768 --gpu-memory-utilization 0.92 --cpu-offload-gb 90 --max-num-seqs 256 --enable-prompt-tokens-details --trust-remote-code --reasoning-parser deepseek_v4 --kv-cache-dtype fp8
     healthcheck:
-      start_period: 3600s
+      start_period: 3600s --async-scheduling

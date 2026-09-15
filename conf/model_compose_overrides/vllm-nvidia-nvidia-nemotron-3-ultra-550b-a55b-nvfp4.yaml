@@ -6,4 +6,4 @@ services:
     command: >
       --model nvidia/NVIDIA-Nemotron-3-Ultra-550B-A55B-NVFP4 --served-model-name nvidia/NVIDIA-Nemotron-3-Ultra-550B-A55B-NVFP4 --host 0.0.0.0 --port 8000 --max-model-len 32768 --gpu-memory-utilization 0.92 --cpu-offload-gb 100 --max-num-seqs 256 --enable-prompt-tokens-details --trust-remote-code --reasoning-parser nemotron_v3 --kv-cache-dtype fp8
     healthcheck:
-      start_period: 3600s
+      start_period: 3600s --async-scheduling

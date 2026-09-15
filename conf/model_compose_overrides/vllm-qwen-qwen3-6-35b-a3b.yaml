@@ -1,4 +1,4 @@
 services:
   vllm:
     command: >
-      --model Qwen/Qwen3.6-35B-A3B --served-model-name Qwen/Qwen3.6-35B-A3B --host 0.0.0.0 --port 8000 --max-model-len 32768 --gpu-memory-utilization 0.80 --max-num-seqs 256 --enable-prompt-tokens-details --trust-remote-code --enable-auto-tool-choice --reasoning-parser qwen3 --tool-call-parser qwen3_coder
+      --model Qwen/Qwen3.6-35B-A3B --served-model-name Qwen/Qwen3.6-35B-A3B --host 0.0.0.0 --port 8000 --max-model-len 32768 --gpu-memory-utilization 0.80 --max-num-seqs 256 --enable-prompt-tokens-details --trust-remote-code --enable-auto-tool-choice --reasoning-parser qwen3 --tool-call-parser qwen3_coder --kv-cache-dtype fp8 --async-scheduling

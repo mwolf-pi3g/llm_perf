@@ -217,10 +217,42 @@ async function main() {
       '--endpoint', '/v1/chat/completions',
       '--streaming',
       '--url', 'http://localhost:8000',
-      '--request-count', '50',
+      // Time-boxed instead of count-based. A fixed request count makes c=1 do the
+      // same work as c=32 with no parallelism, so the low end dominates wall clock
+      // while producing the least useful data. Fixed duration per level gives a
+      // predictable total that does not depend on how slow a model turns out to be.
+      // 300s x 6 levels = 30 min/model benchmarking; with ~7 min average model load
+      // and grace/teardown that is roughly 8.5-9h wall clock for all 14 models.
+      '--benchmark-duration', '300',
+      '--benchmark-grace-period', '30',
       '--gpu-telemetry', 'pynvml',
       '--slice-duration', '10',
       '--auto-plot',
+      // Fixed seed: without it, synthetic prompts differ between runs, so
+      // run-to-run variance mixes prompt variance with real signal. Pinning the
+      // vLLM image is pointless if the workload drifts.
+      '--random-seed', '42',
+      // ISL/OSL sized for the DGX Spark: a balanced ~1K-in/1K-out interactive
+      // shape that exercises prefill and decode roughly equally, and stays well
+      // inside --max-model-len 32768 even at the top of the concurrency sweep.
+      '--prompt-input-tokens-mean', '1024',
+      // OSL 512, not 1024: with duration-based timing a longer OSL does not cost
+      // wall clock, it just means fewer completed requests per window. 512 is still
+      // a substantial decode workload while roughly doubling the sample count.
+      '--prompt-output-tokens-mean', '512',
+      // stddev 0 = every request is exactly ISL/OSL. Any value > 0 introduces
+      // per-request length variability, which would blur the comparison between
+      // models that this whole harness exists to make.
+      '--prompt-input-tokens-stddev', '0',
+      '--prompt-output-tokens-stddev', '0',
+      // Without this, max_tokens is only a ceiling: models emit EOS early and
+      // each request does a different amount of decode work, so e2e latency
+      // differences between models are partly just answer-length differences.
+      // Forcing generation to max_tokens makes every request identical work.
+      // Global on purpose -- it is a methodology choice, not a model property.
+      // (extra_inputs accumulates as a tuple list, so per-model --extra-inputs
+      // in aiperf_args are appended, not overwritten.)
+      '--extra-inputs', 'ignore_eos:true',
       '--model', `"${model}"`,
       '--concurrency', `"${concurrencyVal}"`,
       '--artifact-dir', `"${artifactDir}"`,

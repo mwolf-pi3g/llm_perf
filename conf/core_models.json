@@ -6,6 +6,7 @@
       1,
       4,
       16,
+      32,
       64,
       128
     ]
@@ -17,6 +18,7 @@
       1,
       4,
       16,
+      32,
       64,
       128,
       256
@@ -29,6 +31,7 @@
       1,
       4,
       16,
+      32,
       64,
       128,
       256
@@ -41,17 +44,19 @@
       1,
       4,
       16,
+      32,
       64,
       128
     ]
   },
   {
     "model": "Inferact/Qwen3.8-27B-NVFP4",
-    "aiperf_args": "--extra-inputs '{\"chat_template_kwargs\":{\"enable_thinking\":false}}'",
+    "aiperf_args": "--extra-inputs '{\"reasoning_effort\":\"low\"}'",
     "aiperf_concurrency": [
       1,
       4,
       16,
+      32,
       64,
       128,
       256
@@ -64,6 +69,7 @@
       1,
       4,
       16,
+      32,
       64,
       128
     ]
@@ -75,6 +81,7 @@
       1,
       4,
       16,
+      32,
       64,
       128,
       256
@@ -87,6 +94,7 @@
       1,
       4,
       16,
+      32,
       64,
       128,
       256
@@ -99,6 +107,7 @@
       1,
       4,
       16,
+      32,
       64,
       128,
       256
@@ -111,6 +120,7 @@
       1,
       4,
       16,
+      32,
       64,
       128
     ]
@@ -122,28 +132,31 @@
       1,
       4,
       16,
+      32,
       64,
       128
     ]
   },
   {
     "model": "Qwen/Qwen3.8-27B",
-    "aiperf_args": "--extra-inputs '{\"chat_template_kwargs\":{\"enable_thinking\":false}}'",
+    "aiperf_args": "--extra-inputs '{\"reasoning_effort\":\"low\"}'",
     "aiperf_concurrency": [
       1,
       4,
       16,
+      32,
       64,
       128
     ]
   },
   {
     "model": "Qwen/Qwen3.8-27B-FP8",
-    "aiperf_args": "--extra-inputs '{\"chat_template_kwargs\":{\"enable_thinking\":false}}'",
+    "aiperf_args": "--extra-inputs '{\"reasoning_effort\":\"low\"}'",
     "aiperf_concurrency": [
       1,
       4,
       16,
+      32,
       64,
       128,
       256
@@ -151,21 +164,25 @@
   },
   {
     "model": "RadixArk/Qwen3.8-Flash-Next-NVFP4",
-    "aiperf_args": "--extra-inputs '{\"chat_template_kwargs\":{\"enable_thinking\":false}}'",
+    "aiperf_args": "--extra-inputs '{\"reasoning_effort\":\"low\"}'",
     "aiperf_concurrency": [
       1,
       4,
       16,
-      64
+      32,
+      64,
+      128,
+      256
     ]
   },
   {
     "model": "unsloth/Qwen3.8-27B-NVFP4",
-    "aiperf_args": "--extra-inputs '{\"chat_template_kwargs\":{\"enable_thinking\":false}}'",
+    "aiperf_args": "--extra-inputs '{\"reasoning_effort\":\"low\"}'",
     "aiperf_concurrency": [
       1,
       4,
       16,
+      32,
       64,
       128,
       256
