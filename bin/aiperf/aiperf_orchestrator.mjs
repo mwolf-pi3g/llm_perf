@@ -293,6 +293,9 @@ async function main() {
     } catch (error) {
       console.error(`[WARNING] Error stopping container "${container_name}":`, error.message);
     }
+    
+    const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+    await sleep(300000);
 
     currentContainerName = null;
   }
