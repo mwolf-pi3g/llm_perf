@@ -221,10 +221,15 @@ async function main() {
       // same work as c=32 with no parallelism, so the low end dominates wall clock
       // while producing the least useful data. Fixed duration per level gives a
       // predictable total that does not depend on how slow a model turns out to be.
-      // 300s x 6 levels = 30 min/model benchmarking; with ~7 min average model load
-      // and grace/teardown that is roughly 8.5-9h wall clock for all 14 models.
       '--benchmark-duration', '300',
       '--benchmark-grace-period', '30',
+      // Two passes per configuration so aiperf can report std and confidence
+      // intervals. With a single run it emits "num_successful=1 ... std=0, CI
+      // collapsed to the mean" -- which reads as perfect precision but actually
+      // means no information about repeatability. Cooldown separates the passes
+      // so the second is not measured on a thermally hotter machine.
+      '--num-profile-runs', '2',
+      '--profile-run-cooldown-seconds', '60',
       '--gpu-telemetry', 'pynvml',
       '--slice-duration', '10',
       '--auto-plot',
