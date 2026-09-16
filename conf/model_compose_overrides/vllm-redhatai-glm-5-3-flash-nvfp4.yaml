@@ -1,0 +1,12 @@
+# Big-tier override. Measured weight footprint: 184.26 GB vs 288 GB HBM3e (GB300).
+# NVFP4 quant of zai-org/GLM-5.3-Flash (305.7 GB BF16) — fits HBM outright, so no
+# --cpu-offload-gb here, unlike the BF16 sibling (110 GB) and nvidia/GLM-5.2-NVFP4 (190 GB).
+# Same Glm5NextForConditionalGeneration arch as the BF16 sibling: in vLLM main but NOT in
+# the v0.29.0 release -> nightly image required.
+services:
+  vllm:
+    image: vllm/vllm-openai:nightly
+    command: >
+      --model RedHatAI/GLM-5.3-Flash-NVFP4 --served-model-name RedHatAI/GLM-5.3-Flash-NVFP4 --host 0.0.0.0 --port 8000 --max-model-len 32768 --gpu-memory-utilization 0.92 --max-num-seqs 256 --enable-prompt-tokens-details --trust-remote-code --reasoning-parser glm47 --kv-cache-dtype fp8 --async-scheduling
+    healthcheck:
+      start_period: 3600s

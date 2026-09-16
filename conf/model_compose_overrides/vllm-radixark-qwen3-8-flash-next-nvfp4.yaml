@@ -1,4 +1,5 @@
 services:
   vllm:
+    image: vllm/vllm-openai:nightly
     command: >
-      --model RadixArk/Qwen3.8-Flash-Next-NVFP4 --served-model-name RadixArk/Qwen3.8-Flash-Next-NVFP4 --host 0.0.0.0 --port 8000 --max-model-len 32768 --gpu-memory-utilization 0.80 --max-num-seqs 256 --enable-prompt-tokens-details --trust-remote-code --enable-auto-tool-choice --kv-cache-dtype fp8 --reasoning-parser qwen3 --tool-call-parser qwen3_coder --async-scheduling
+      --model RadixArk/Qwen3.8-Flash-Next-NVFP4 --served-model-name RadixArk/Qwen3.8-Flash-Next-NVFP4 --host 0.0.0.0 --port 8000 --max-model-len 32768 --gpu-memory-utilization 0.80 --max-num-seqs 256 --enable-prompt-tokens-details --trust-remote-code --enable-auto-tool-choice --kv-cache-dtype auto --reasoning-parser qwen3 --tool-call-parser qwen3_coder --async-scheduling

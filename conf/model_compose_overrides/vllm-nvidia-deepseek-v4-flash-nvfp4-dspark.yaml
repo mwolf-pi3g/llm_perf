@@ -1,9 +1,11 @@
-# Big-tier override. Measured weight footprint: 284.8 GB vs 288 GB HBM3e (GB300).
-# Weights 284.8 GB sit just under 288 GB HBM but leave no room for KV at any usable
-# utilization; 90 GB spills to Grace LPDDR.
+# Big-tier override. Measured weight footprint: 164.06 GB vs 288 GB HBM3e (GB300).
+# (hfdl, 2026-09-16. Prior comment claimed 284.8 GB, which the repo no longer matches.)
+# Fits HBM outright: 0.92 util = 265 GB budget -> ~101 GB left for KV. No offload.
+# Do NOT reinstate --cpu-offload-gb here; it was sized off the stale 284.8 GB figure
+# and forced 90 GB of weights across NVLink-C2C on every token for no reason.
 services:
   vllm:
     command: >
-      --model nvidia/DeepSeek-V4-Flash-nvfp4-DSpark --served-model-name nvidia/DeepSeek-V4-Flash-nvfp4-DSpark --host 0.0.0.0 --port 8000 --max-model-len 32768 --gpu-memory-utilization 0.92 --cpu-offload-gb 90 --max-num-seqs 256 --enable-prompt-tokens-details --trust-remote-code --reasoning-parser deepseek_v4 --kv-cache-dtype fp8
+      --model nvidia/DeepSeek-V4-Flash-nvfp4-DSpark --served-model-name nvidia/DeepSeek-V4-Flash-nvfp4-DSpark --host 0.0.0.0 --port 8000 --max-model-len 32768 --gpu-memory-utilization 0.92 --max-num-seqs 256 --enable-prompt-tokens-details --trust-remote-code --reasoning-parser deepseek_v4 --kv-cache-dtype fp8 --async-scheduling
     healthcheck:
-      start_period: 3600s --async-scheduling
+      start_period: 3600s

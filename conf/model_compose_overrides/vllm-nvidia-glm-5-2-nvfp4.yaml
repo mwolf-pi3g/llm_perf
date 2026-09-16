@@ -1,8 +1,11 @@
-# Big-tier override. Measured weight footprint: 390.7 GB vs 288 GB HBM3e (GB300).
-# Weights 390.7 GB exceed the 288 GB of HBM3e outright; 190 GB spills to Grace LPDDR.
+# Big-tier override. Measured weight footprint: 432.9 GB vs 288 GB HBM3e (GB300).
+# (hfdl, 2026-09-16. Prior comment claimed 390.7 GB and sized the offload off that.)
+# Weights exceed HBM outright; 215 GB spills to Grace LPDDR -> 217.9 GB resident
+# against a 265 GB budget (0.92 util), leaving ~47 GB for KV. At the old 190 GB the
+# resident set was 242.9 GB and KV got ~22 GB, too little for 32k x 256 seqs.
 services:
   vllm:
     command: >
-      --model nvidia/GLM-5.2-NVFP4 --served-model-name nvidia/GLM-5.2-NVFP4 --host 0.0.0.0 --port 8000 --max-model-len 32768 --gpu-memory-utilization 0.92 --cpu-offload-gb 190 --max-num-seqs 256 --enable-prompt-tokens-details --trust-remote-code --reasoning-parser glm47 --kv-cache-dtype fp8
+      --model nvidia/GLM-5.2-NVFP4 --served-model-name nvidia/GLM-5.2-NVFP4 --host 0.0.0.0 --port 8000 --max-model-len 32768 --gpu-memory-utilization 0.92 --cpu-offload-gb 215 --max-num-seqs 256 --enable-prompt-tokens-details --trust-remote-code --reasoning-parser glm47 --kv-cache-dtype fp8 --async-scheduling
     healthcheck:
-      start_period: 3600s --async-scheduling
+      start_period: 3600s
